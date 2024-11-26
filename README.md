@@ -15,7 +15,6 @@ I can comments like this
 
 
 ```r
-
 # Load packages
 library(triangulaR)
 library(vcfR)
@@ -317,18 +316,30 @@ fox_sparrow_90 <- read.vcfR("snps_3_90.vcf.gz")
 #>   row_num: 0
 #> Processed variant 1000Processed variant 2000Processed variant 3000Processed variant 4000Processed variant 5000Processed variant 6000Processed variant 7000Processed variant 8000Processed variant 9000Processed variant 10000Processed variant 11000Processed variant 12000Processed variant 13000Processed variant 14000Processed variant 15000Processed variant 16000Processed variant 17000Processed variant 18000Processed variant 19000Processed variant 20000Processed variant 21000Processed variant 22000Processed variant 23000Processed variant 24000Processed variant: 24592
 #> All variants processed
+fox_sparrow_100 <- read.vcfR("snps_3_100.vcf.gz")
+#> Scanning file to determine attributes.
+#> File attributes:
+#>   meta lines: 14
+#>   header_line: 15
+#>   variant count: 13188
+#>   column count: 69
+#> Meta line 14 read in.
+#> All meta lines processed.
+#> gt matrix initialized.
+#> Character matrix gt created.
+#>   Character matrix gt rows: 13188
+#>   Character matrix gt cols: 69
+#>   skip: 0
+#>   nrows: 13188
+#>   row_num: 0
+#> Processed variant 1000Processed variant 2000Processed variant 3000Processed variant 4000Processed variant 5000Processed variant 6000Processed variant 7000Processed variant 8000Processed variant 9000Processed variant 10000Processed variant 11000Processed variant 12000Processed variant 13000Processed variant: 13188
+#> All variants processed
 fox_sparrow_pm <- read.table("passerella_samples_3.txt", header = T)
 
 
-
-
-
-
-
-#################################
-##   Even parental sampling    ##
-#################################
-
+############################################
+##   Uneven parental sampling (18 & 5)    ##
+############################################
 fox_sparrow_aims <- alleleFreqDiff(vcfR = fox_sparrow_90, pm = fox_sparrow_pm, 
                                    p1 = "ili", p2 = "una", difference = 1)
 #> [1] "60 sites passed allele frequency difference threshold"
@@ -350,6 +361,44 @@ sim.hybrid.CIs(vcfR = fox_sparrow_aims, pm = fox_sparrow_pm, p1 = "ili", p2 = "u
 ```
 
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-2.png)
+
+```r
+
+
+
+
+
+#################################
+##   Even parental sampling    ##
+#################################
+fox_sparrow_pm_5 <- fox_sparrow_pm
+ili_pars <- fox_sparrow_pm_5[fox_sparrow_pm$pop=="ili",]$id
+set.seed(894612)
+
+fox_sparrow_pm_5[fox_sparrow_pm$id %in% sample(ili_pars, 5, replace = F),"pop"] <- "ili_ref"
+
+
+
+fox_sparrow_aims <- alleleFreqDiff(vcfR = fox_sparrow_100, pm = fox_sparrow_pm_5, 
+                                   p1 = "ili_ref", p2 = "una", difference = 1)
+#> [1] "48 sites passed allele frequency difference threshold"
+fox_sparrow_hi_het <-hybridIndex(vcfR = fox_sparrow_aims, pm = fox_sparrow_pm_5, p1 = "ili_ref", p2 = "una")
+#> [1] "calculating hybrid indices and heterozygosities based on 48 sites"
+triangle.plot(fox_sparrow_hi_het)
+```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-3.png)
+
+```r
+
+library(dplyr)
+library(ggrepel)
+sim.hybrid.CIs(vcfR = fox_sparrow_aims, pm = fox_sparrow_pm_5, p1 = "ili_ref", p2 = "una", reps = 1000, 
+               plot.samples = T, colors = NULL, ind.labels = F, max.overlaps = 10) 
+#> [1] "calculating hybrid indices and heterozygosities based on 48 sites"
+```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-4.png)
 
 
 

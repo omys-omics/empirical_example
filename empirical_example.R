@@ -299,18 +299,13 @@ sim.hybrid.CIs <- function(vcfR = NULL, pm = NULL, p1 = NULL, p2 = NULL, reps = 
 
 # Read in empirical data
 fox_sparrow_90 <- read.vcfR("snps_3_90.vcf.gz")
+fox_sparrow_100 <- read.vcfR("snps_3_100.vcf.gz")
 fox_sparrow_pm <- read.table("passerella_samples_3.txt", header = T)
 
 
-
-
-
-
-
-#################################
-##   Even parental sampling    ##
-#################################
-
+############################################
+##   Uneven parental sampling (18 & 5)    ##
+############################################
 fox_sparrow_aims <- alleleFreqDiff(vcfR = fox_sparrow_90, pm = fox_sparrow_pm, 
                                    p1 = "ili", p2 = "una", difference = 1)
 fox_sparrow_hi_het <-hybridIndex(vcfR = fox_sparrow_aims, pm = fox_sparrow_pm, p1 = "ili", p2 = "una")
@@ -325,6 +320,26 @@ sim.hybrid.CIs(vcfR = fox_sparrow_aims, pm = fox_sparrow_pm, p1 = "ili", p2 = "u
 
 
 
+#################################
+##   Even parental sampling    ##
+#################################
+fox_sparrow_pm_5 <- fox_sparrow_pm
+ili_pars <- fox_sparrow_pm_5[fox_sparrow_pm$pop=="ili",]$id
+set.seed(894612)
+
+fox_sparrow_pm_5[fox_sparrow_pm$id %in% sample(ili_pars, 5, replace = F),"pop"] <- "ili_ref"
+
+
+
+fox_sparrow_aims <- alleleFreqDiff(vcfR = fox_sparrow_100, pm = fox_sparrow_pm_5, 
+                                   p1 = "ili_ref", p2 = "una", difference = 1)
+fox_sparrow_hi_het <-hybridIndex(vcfR = fox_sparrow_aims, pm = fox_sparrow_pm_5, p1 = "ili_ref", p2 = "una")
+triangle.plot(fox_sparrow_hi_het)
+
+library(dplyr)
+library(ggrepel)
+sim.hybrid.CIs(vcfR = fox_sparrow_aims, pm = fox_sparrow_pm_5, p1 = "ili_ref", p2 = "una", reps = 1000, 
+               plot.samples = T, colors = NULL, ind.labels = F, max.overlaps = 10) 
 
 
 
