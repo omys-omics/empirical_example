@@ -1,22 +1,21 @@
 setwd("~/Documents/Ben's Stuff/0 KU/Dissertation/Simulations/Triangle_Plots_best_practices/empirical_example")
 
-# Connect RStudio to GitHub
+# Connect RStudio to GitHub (only need to run this once!)
 library(usethis)
 use_git()
 use_github()
 usethis::use_readme_rmd()
 
 
-
+# Copy code to README.rmd and run this to knit
 library(knitr)
 knit(input="README.rmd", output = "README.md")
 
-#usethis::use_git_remote("origin", url = NULL, overwrite = TRUE)
-#usethis::use_git_remote("origin", url = "https://github.com/omys-omics/empirical_example", overwrite = TRUE)
+
 #########
 
 
-# Load packages#
+# Load packages
 library(triangulaR)
 library(vcfR)
 library(SNPfiltR)
